@@ -19,3 +19,10 @@
     (is (= {:a [1 2 3]} (remove-from-all {:a [1 2 4 3]} 4)))
     )
   )
+
+(deftest discard-test
+  (testing "Discarding cards"
+    (is (= {:cards {"Darth" [] :deck [4] :discarded [3]}} 
+      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []}} 3)) "Discarding a card")
+    )
+  )
