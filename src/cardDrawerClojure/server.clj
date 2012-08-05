@@ -30,8 +30,14 @@
   (redirect "/status")
   )
 
+(defpage [:post "/register"] {:as registerobject}
+  (let [name (registerobject :name)]
+    (redirect (str "/status?name=" name))
+  )
+  )
+
 (defpartial name-reg-form []
-  (form-to [:get "/status"]
+  (form-to [:post "/register"]
      (label "newval" "Your name")
      (text-field "name")
      (submit-button "To the game"))
