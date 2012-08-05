@@ -27,10 +27,14 @@
   (let [aval (to-int (updateobject :newval))]
     (if (not (nil? aval)) (dosync (ref-set counter aval))) 
   )
-  (redirect "/")
+  (redirect "/status")
   )
 
 (defpage "/" []
+  (html5 [:body "This is a mainpage"])
+  )
+
+(defpage "/status" []
     (html5 
       [:head
     [:title "Dummy title"]
