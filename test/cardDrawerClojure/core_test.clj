@@ -13,3 +13,9 @@
     (is (= {:players {"Darth" [1]} :deck []} (draw-card {:players {"Darth" []} :deck [1]} "Darth")) "Drawing the last card")
     )
   )
+
+(deftest remove-from-all-test
+  (testing "Remove all"
+    (is (= {:a [1 2 3]} (remove-from-all {:a [1 2 4 3]} 4)))
+    )
+  )

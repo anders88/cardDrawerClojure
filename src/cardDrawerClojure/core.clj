@@ -20,12 +20,6 @@
 
   ))
 
-
-
-(defn pick-random [listing picks]
-  (if (<= picks 0) []
-  (let [number (rand-int (count listing))]
-  (cons ((vec listing) number) (pick-random 
-        (remove-item listing number)  
-        (dec picks)))
-  )))
+(defn remove-from-all [items remove-value]
+  (reduce #(merge %1 %2) (map (fn [entry] {(entry 0) (vec (filter #(not (= % remove-value)) (entry 1)))}) items))
+)
