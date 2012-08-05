@@ -35,7 +35,7 @@
   )
 
 (defpartial name-part [name]
-  [:p (str "Your name is " name)]
+  [:div {:id "namediv", :style "display: none;"} name]
   )
 
 (defpage  [:get "/status"] {:as nameobject}
