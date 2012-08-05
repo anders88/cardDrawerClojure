@@ -30,25 +30,39 @@
   (redirect "/status")
   )
 
+(defpartial name-reg-form []
+  (form-to [:get "/status"]
+     (label "newval" "Your name")
+     (text-field "name")
+     (submit-button "To the game"))
+  )
+
 (defpage "/" []
-  (html5 [:body "This is a mainpage"])
+  (html5 [:body [:h1 "Welcome"] (name-reg-form)])
   )
 
 (defpartial name-part [name]
   [:div {:id "namediv", :style "display: none;"} name]
   )
 
+(defpartial reload-part [name]
+  [:p (status-content @counter)]
+  )
+
+
 (defpage  [:get "/status"] {:as nameobject}
     (html5 
       [:head
     [:title "Dummy title"]
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
-      [:body [:h1 "Headline"] (name-part (nameobject :name))[:p (status-content @counter)] [:p (update-form)]])
+      [:body [:h1 "Headline"] 
+            (name-part (nameobject :name)) 
+           (reload-part (nameobject :name)) [:p (update-form)]])
 )
 
 
-(defpage "/update.html" []
-  (status-content @counter)
+(defpage [:get "/update.html"] {:as nameobject}
+  (reload-part (nameobject :name))
   )
 
 (defpage "/increase" []
