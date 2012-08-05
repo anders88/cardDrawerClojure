@@ -9,8 +9,15 @@
 
 (def counter (ref 0))
 
-(defpartial status-content [value]
-  [:div {:id "someid"} (str "Date is " (new java.util.Date) " Value is " value)]
+(def game (ref {:cards {:deck (vec (range 1 21))}}))
+
+(defpartial status-content [game]
+  [:div {:id "someid"} 
+    [:p (str "Date is " (new java.util.Date))]
+    [:ul
+      [:li (str "Cards in deck " (count ((game :cards) :deck)))]
+      ]
+  ]
   )
 
 (defpartial update-form []
@@ -52,7 +59,7 @@
   )
 
 (defpartial reload-part [name]
-  [:p (status-content @counter)]
+  [:p (status-content @game)]
   )
 
 
