@@ -1,11 +1,11 @@
 (ns cardDrawerClojure.core)
 
 (defn register-player [game name]
-  (assoc game :players (assoc (game :players) name []))
+  (assoc game :cards (assoc (game :cards) name []))
 )
 
 (defn update-player-deck [game player new-hand]
-  (assoc game :players (assoc (game :players) player new-hand))
+  (assoc game :cards (assoc (game :cards) player new-hand))
   )
 
 (defn remove-item [listing number]
@@ -15,8 +15,10 @@
 
 
 (defn draw-card [game player]
-  (let [hand ((game :players) player) deck (game :deck) pick (rand-int (count (game :deck)))]
-  (update-player-deck (assoc game :deck (remove-item deck pick)) player (conj hand (deck pick)))
+  (let [hand ((game :cards) player) deck ((game :cards) :deck) pick (rand-int (count ((game :cards) :deck)))]
+    (update-player-deck (update-player-deck game player (conj hand (deck pick)))
+       :deck (remove-item deck pick)
+    )
 
   ))
 
