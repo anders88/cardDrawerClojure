@@ -4,7 +4,7 @@
   (assoc game :cards (assoc (game :cards) name []))
 )
 
-(defn update-player-deck [game player new-hand]
+(defn update-deck [game player new-hand]
   (assoc game :cards (assoc (game :cards) player new-hand))
   )
 
@@ -16,7 +16,7 @@
 
 (defn draw-card [game player]
   (let [hand ((game :cards) player) deck ((game :cards) :deck) pick (rand-int (count ((game :cards) :deck)))]
-    (update-player-deck (update-player-deck game player (conj hand (deck pick)))
+    (update-deck (update-deck game player (conj hand (deck pick)))
        :deck (remove-item deck pick)
     )
 
