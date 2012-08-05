@@ -5,8 +5,10 @@
   (:require [noir.server :as server])
 )
 
-(defpartial status-content []
-  [:div {:id "someid"} (str "Date is " (new java.util.Date))]
+(def counter (ref 0))
+
+(defpartial status-content [value]
+  [:div {:id "someid"} (str "Date is " (new java.util.Date) " Value is " value)]
   )
 
 (defpage "/" []
@@ -14,13 +16,17 @@
       [:head
     [:title "Dummy title"]
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
-      [:body [:h1 "Headline"] (status-content)])
+      [:body [:h1 "Headline"] (status-content @counter)])
 )
 
 (defpage "/update.html" []
-  (status-content)
+  (status-content @counter)
   )
 
+(defpage "/increase" []
+  (dosync (ref-set counter (inc @counter)))
+  (html5 [:body (str "Counter increased to " @counter)])
+  )
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
