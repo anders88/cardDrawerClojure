@@ -34,12 +34,16 @@
   (html5 [:body "This is a mainpage"])
   )
 
-(defpage "/status" []
+(defpartial name-part [name]
+  [:p (str "Your name is " name)]
+  )
+
+(defpage  [:get "/status"] {:as nameobject}
     (html5 
       [:head
     [:title "Dummy title"]
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
-      [:body [:h1 "Headline"] (status-content @counter) (update-form)])
+      [:body [:h1 "Headline"] (name-part (nameobject :name))[:p (status-content @counter)] [:p (update-form)]])
 )
 
 
