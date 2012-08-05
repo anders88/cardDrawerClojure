@@ -7,8 +7,6 @@
   (:require [noir.server :as server])
 )
 
-(def counter (ref 0))
-
 (def game (ref {:cards {:deck (vec (range 1 21))}}))
 
 (defpartial status-content [game]
@@ -30,12 +28,6 @@
 (defn to-int [s]
   (try (Integer/parseInt s) (catch NumberFormatException e nil)))
 
-(defpage [:post "/updatevalue"] {:as updateobject}
-  (let [aval (to-int (updateobject :newval))]
-    (if (not (nil? aval)) (dosync (ref-set counter aval))) 
-  )
-  (redirect "/status")
-  )
 
 (defpage [:post "/register"] {:as registerobject}
   (let [name (registerobject :name)]
@@ -78,10 +70,6 @@
   (reload-part (nameobject :name))
   )
 
-(defpage "/increase" []
-  (dosync (ref-set counter (inc @counter)))
-  (html5 [:body (str "Counter increased to " @counter)])
-  )
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
