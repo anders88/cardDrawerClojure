@@ -8,7 +8,7 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 8)) :discarded [30 25 32]}}))
+(def game (ref {:cards {:deck (vec (range 1 9)) :discarded []} :maxc 8}))
 
 
 (defn format-list [cards]
@@ -71,7 +71,7 @@
 
 (defpartial draw-card-part [name]
   (form-to [:post "/drawCard"]
-     (hidden-field "name" name)
+     (hidden-field "name" name)     
      (submit-button "Draw card"))
   )
   
@@ -79,6 +79,13 @@
   (let [player-name (registerobject :name)]    
     (handle-result-part player-name (draw-card @game player-name))    
   )
+  )
+
+(defpartial discard-card-part [name]
+  (form-to [:post "/discardCard"]
+     (hidden-field "name" name)
+     (text-field "card")  
+     (submit-button "Discard card"))
   )
 
 
@@ -90,7 +97,8 @@
       [:body [:h1 "Headline"] 
             (name-part (nameobject :name)) 
            (reload-part (nameobject :name))
-           (draw-card-part (nameobject :name))])
+           (draw-card-part (nameobject :name))
+           (discard-card-part (nameobject :name))])
 )
 
 
