@@ -120,6 +120,8 @@
            (discard-card-part (nameobject :name))
            (oop-card-part (nameobject :name))
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
+           [:p (link-to (str "/newgame?name=" (nameobject :name)) "New game")]
+
       ])
 )
 
@@ -168,7 +170,15 @@
   (redirect (str "/admin?name=" (updateobject :name)))
   )
 
-
+(defpage [:get "/newgame"] {:as nameobject}
+  (html5 
+  [:body [:h1 "Start new game"]
+    (form-to [:post "/createGame"]
+     (hidden-field "name" name)
+      (label "newval" "Number of cards:")
+     (text-field "numcards")  
+     (submit-button "Start new game"))]
+  ))
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
