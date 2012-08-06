@@ -7,13 +7,18 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 21))}}))
+(def game (ref {:cards {:deck (vec (range 1 21)) :discarded [30 25 32]}}))
+
+(defn format-list [cards]
+  (reduce #(str %1 ", " %2) (sort cards))
+  )
 
 (defpartial status-content [game]
   [:div {:id "someid"} 
     [:p (str "Date is " (new java.util.Date))]
     [:ul
-      [:li (str "Cards in deck " (count ((game :cards) :deck)))]
+      [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
+      [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
       ]
   ]
   )
