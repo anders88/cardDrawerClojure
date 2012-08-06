@@ -1,6 +1,7 @@
 (ns cardDrawerClojure.server
   (:use [noir.core :only [defpage defpartial]]
-        [hiccup.page-helpers :only [html5 include-js link-to]]
+        [hiccup.core :only [html]]
+        [hiccup.page-helpers :only [html5 include-js link-to unordered-list]]
         [hiccup.form-helpers]
         [noir.response :only [redirect]]
         [cardDrawerClojure.core]  
@@ -20,11 +21,12 @@
   [:div {:id "someid"} 
     [:p (str "Date is " (new java.util.Date))]
     [:ul
+      
       [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
       [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
-      [:li (str "Out of play: " (format-list ((game :cards) :oop)))]
-      [:li (link-to (str "/admin?name=" player-name) "Admin")]
+      [:li (str "Out of play: " (format-list ((game :cards) :oop)))]      
+      [:li (str "Admin seen by " (game :adminSeenBy) " at " (game :adminSeen))]
       ]
   ]
   )
@@ -111,12 +113,13 @@
       [:head
     [:title "Dummy title"]
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
-      [:body [:h1 "Headline"] 
+      [:body [:h1 (str "Hello " (nameobject :name))] 
             (name-part (nameobject :name)) 
            (reload-part (nameobject :name))
            (draw-card-part (nameobject :name))
            (discard-card-part (nameobject :name))
            (oop-card-part (nameobject :name))
+           [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
       ])
 )
 
@@ -125,8 +128,28 @@
   (reload-part (nameobject :name))
   )
 
+(defn card-status-display [status-elem player-list]
+  (let [card (status-elem :cardNo)]
+  (html [:div (str card ": " (status-elem :status) " - ") 
+  (str "<a href=\"/adminupdate?card=" card "&status=zdeck\">To deck</a>, ")
+  (str "<a href=\"/adminupdate?card=" card "&status=zdiscard\">Discard</a>, ")
+  (str "<a href=\"/adminupdate?card=" card "&status=zoop\">Out of play</a>, ")
+  (reduce #(str %1 ", " %2) 
+  (map 
+    #(str "<a href=\"/adminupdate?card=" card "&status=" % "\">" % "</a>, ") 
+     player-list))  
+  ])
+  ))
+
 (defpage  [:get "/admin"] {:as nameobject}
-  (html5 [:body "This is admin"])
+  (dosync (ref-set game (assoc @game :adminSeen (str (new java.util.Date)) :adminSeenBy (nameobject :name))))
+  (let [summary (admin-summary @game)]
+  (html5 [:body 
+    [:h1 "Admin page"]
+    (unordered-list (map #(card-status-display % (summary :players)) 
+     (summary :cards)))
+    (link-to (str "/status?name=" (nameobject :name)) "Back")
+         ]))
 )
 
 (defn -main [& m]
