@@ -1,6 +1,6 @@
 (ns cardDrawerClojure.server
   (:use [noir.core :only [defpage defpartial]]
-        [hiccup.page-helpers :only [html5 include-js]]
+        [hiccup.page-helpers :only [html5 include-js link-to]]
         [hiccup.form-helpers]
         [noir.response :only [redirect]]
         [cardDrawerClojure.core]  
@@ -65,9 +65,12 @@
   )
 
 (defn handle-result-part [player-name result]
+  (if (map? result)
+  (let [player player-name]
   (dosync (ref-set game result))
-  (redirect (str "/status?name=" player-name))
-  )
+  (redirect (str "/status?name=" player-name)))
+  (html5 [:body [:h1 "Error"] [:p result] [:p (link-to (str "/status?name=" player-name) "Back")]])
+  ))
 
 
 (defpartial draw-card-part [name]
