@@ -59,3 +59,18 @@
   card-no
   ))  
 )
+
+(defn card-status [game card-no]
+  (first (first (filter #(contains? (set (second %)) card-no) (game :cards))))
+  )
+
+(defn player-list [game]
+  (set (map #(first %) (filter #(string? (first %)) (game :cards))))
+  )
+
+(defn admin-summary [game]
+  {:cards
+  (map (fn [card-no] {:cardNo card-no :status (card-status game card-no)}) (range 1 (inc (game :maxc))))
+  :players (player-list game)
+  }
+  )

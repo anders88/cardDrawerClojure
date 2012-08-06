@@ -31,3 +31,20 @@
       (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "11")) "To high card")  
     )
   )
+
+(deftest admin-summary-test
+  (testing "Admin summary"
+    (is (= {:cards [
+      {:cardNo 1 :status :deck}
+      {:cardNo 2 :status "Darth"}
+      {:cardNo 3 :status "Luke"}
+      {:cardNo 4 :status :deck}
+      {:cardNo 5 :status :discarded}
+      {:cardNo 6 :status :oop}
+      ] :players #{"Darth" "Luke"}} 
+      (admin-summary {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6})
+    ) "Cheking summary")
+    (is (= "Luke" (card-status {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 5} 3))
+       "Cheking card status")
+))
+

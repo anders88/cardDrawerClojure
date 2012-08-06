@@ -24,6 +24,7 @@
       [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
       [:li (str "Out of play: " (format-list ((game :cards) :oop)))]
+      [:li (link-to (str "/admin?name=" player-name) "Admin")]
       ]
   ]
   )
@@ -124,7 +125,9 @@
   (reload-part (nameobject :name))
   )
 
-
+(defpage  [:get "/admin"] {:as nameobject}
+  (html5 [:body "This is admin"])
+)
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
