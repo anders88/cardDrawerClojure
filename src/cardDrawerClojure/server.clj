@@ -128,15 +128,15 @@
   (reload-part (nameobject :name))
   )
 
-(defn card-status-display [status-elem player-list]
+(defn card-status-display [status-elem player-list player-name]
   (let [card (status-elem :cardNo)]
   (html [:div (str card ": " (status-elem :status) " - ") 
-  (str "<a href=\"/adminupdate?card=" card "&status=zdeck\">To deck</a>, ")
-  (str "<a href=\"/adminupdate?card=" card "&status=zdiscard\">Discard</a>, ")
-  (str "<a href=\"/adminupdate?card=" card "&status=zoop\">Out of play</a>, ")
+  (str "<a href=\"/adminupdate?card=" card "&status=zdeck&name=" player-name "\">To deck</a>, ")
+  (str "<a href=\"/adminupdate?card=" card "&status=zdiscard&name=" player-name "\">Discard</a>, ")
+  (str "<a href=\"/adminupdate?card=" card "&status=zoop&name=" player-name "\">Out of play</a>, ")
   (reduce #(str %1 ", " %2) 
   (map 
-    #(str "<a href=\"/adminupdate?card=" card "&status=" % "\">" % "</a>, ") 
+    #(str "<a href=\"/adminupdate?card=" card "&status=" % "&name=" player-name "\">" % "</a>, ") 
      player-list))  
   ])
   ))
@@ -146,11 +146,13 @@
   (let [summary (admin-summary @game)]
   (html5 [:body 
     [:h1 "Admin page"]
-    (unordered-list (map #(card-status-display % (summary :players)) 
+    (unordered-list (map #(card-status-display % (summary :players) (nameobject :name)) 
      (summary :cards)))
     (link-to (str "/status?name=" (nameobject :name)) "Back")
          ]))
 )
+
+
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
