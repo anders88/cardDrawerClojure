@@ -79,7 +79,7 @@
   (let [numc (read-card numcards (assoc game :maxc 300))]
   (if (integer? numc)
   (assoc game :maxc numc :cards 
-    (merge (reduce merge (map (fn [el] {el []}) (player-list game))) {:deck (range 1 (inc numc)) :discarded [] :oop []})
+    (merge (reduce merge (map (fn [el] {el []}) (player-list game))) {:deck (vec (range 1 (inc numc))) :discarded [] :oop []})
     )
   "Card must be between 1 and 300"
   )

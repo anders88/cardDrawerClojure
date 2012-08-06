@@ -174,11 +174,15 @@
   (html5 
   [:body [:h1 "Start new game"]
     (form-to [:post "/createGame"]
-     (hidden-field "name" name)
+     (hidden-field "name" (nameobject :name))
       (label "newval" "Number of cards:")
      (text-field "numcards")  
      (submit-button "Start new game"))]
   ))
+
+(defpage [:post "/createGame"] {:as newobject}
+  (handle-result-part (newobject :name) (create-new-game @game (newobject :numcards)))
+  )
 
 (defn -main [& m]
   (let [mode (keyword (or (first m) :dev))
