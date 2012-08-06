@@ -8,7 +8,7 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 9)) :discarded []} :maxc 8}))
+(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8}))
 
 
 (defn format-list [cards]
@@ -23,6 +23,7 @@
       [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
       [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
+      [:li (str "Out of play: " (format-list ((game :cards) :oop)))]
       ]
   ]
   )
@@ -88,6 +89,21 @@
      (submit-button "Discard card"))
   )
 
+(defpage [:post "/discardCard"] {:as registerobject}
+  (handle-result-part (registerobject :name) (discard-card @game (registerobject :card)))
+  )
+
+(defpartial oop-card-part [name]
+  (form-to [:post "/oopCard"]
+     (hidden-field "name" name)
+     (text-field "card")  
+     (submit-button "Out of play"))
+  )
+
+(defpage [:post "/oopCard"] {:as registerobject}
+  (handle-result-part (registerobject :name) (out-of-play-card @game (registerobject :card)))
+  )
+
 
 (defpage  [:get "/status"] {:as nameobject}
     (html5 
@@ -98,7 +114,9 @@
             (name-part (nameobject :name)) 
            (reload-part (nameobject :name))
            (draw-card-part (nameobject :name))
-           (discard-card-part (nameobject :name))])
+           (discard-card-part (nameobject :name))
+           (oop-card-part (nameobject :name))
+      ])
 )
 
 

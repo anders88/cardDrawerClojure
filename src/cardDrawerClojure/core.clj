@@ -49,6 +49,13 @@
 (defn discard-card [game card]
   (let [card-no (read-card card game)]
   (if (integer? card-no) (move-card game card-no :discarded)
+  card-no 
+ ))  
+)
+
+(defn out-of-play-card [game card]
+  (let [card-no (read-card card game)]
+  (if (integer? card-no) (move-card game card-no :oop)
   card-no
   ))  
 )
