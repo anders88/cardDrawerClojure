@@ -3,15 +3,18 @@
         [hiccup.page-helpers :only [html5 include-js]]
         [hiccup.form-helpers]
         [noir.response :only [redirect]]
+        [cardDrawerClojure.core]  
         )
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {"Anders" [33 34] :deck (vec (range 1 21)) :discarded [30 25 32]}}))
+(def game (ref {:cards {:deck (vec (range 1 8)) :discarded [30 25 32]}}))
+
 
 (defn format-list [cards]
+  (if (empty? cards) "None"
   (reduce #(str %1 ", " %2) (sort cards))
-  )
+  ))
 
 (defpartial status-content [game player-name]
   [:div {:id "someid"} 
@@ -37,6 +40,7 @@
 
 (defpage [:post "/register"] {:as registerobject}
   (let [player-name (registerobject :name)]
+    (dosync (ref-set game (register-player @game player-name)))
     (redirect (str "/status?name=" player-name))
   )
   )
@@ -60,6 +64,24 @@
   [:p (status-content @game name)]
   )
 
+(defn handle-result-part [player-name result]
+  (dosync (ref-set game result))
+  (redirect (str "/status?name=" player-name))
+  )
+
+
+(defpartial draw-card-part [name]
+  (form-to [:post "/drawCard"]
+     (hidden-field "name" name)
+     (submit-button "Draw card"))
+  )
+  
+(defpage [:post "/drawCard"] {:as registerobject}
+  (let [player-name (registerobject :name)]    
+    (handle-result-part player-name (draw-card @game player-name))    
+  )
+  )
+
 
 (defpage  [:get "/status"] {:as nameobject}
     (html5 
@@ -68,13 +90,15 @@
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
       [:body [:h1 "Headline"] 
             (name-part (nameobject :name)) 
-           (reload-part (nameobject :name)) [:p (update-form)]])
+           (reload-part (nameobject :name))
+           (draw-card-part (nameobject :name))])
 )
 
 
 (defpage [:get "/update.html"] {:as nameobject}
   (reload-part (nameobject :name))
   )
+
 
 
 (defn -main [& m]
