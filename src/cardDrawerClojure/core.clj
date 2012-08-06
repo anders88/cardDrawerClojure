@@ -25,9 +25,14 @@
 
 
 (defn draw-card [game player]
-  (let [pick (((game :cards) :deck) (rand-int (count ((game :cards) :deck))))]    
-      (move-card game pick player)
-  ))
+  (let [deck ((game :cards) :deck) discarded ((game :cards) :discarded)] 
+  (cond 
+    (and (empty? deck) (empty? discarded)) "No cards left"
+    (empty? deck) (draw-card (assoc game :cards (assoc (game :cards) :deck discarded :discarded [])) player)
+  :else
+  (let [pick (((game :cards) :deck) (rand-int (count ((game :cards) :deck))))]
+      (move-card game pick player))
+  )))
 
 
 (defn discard-card [game card]

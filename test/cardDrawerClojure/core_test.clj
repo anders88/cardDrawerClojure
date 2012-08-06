@@ -10,9 +10,12 @@
 
 (deftest draw-card-test
   (testing "Drawing cards"
-    (is (= {:cards {"Darth" [1] :deck []}} (draw-card {:cards {"Darth" [] :deck [1]}} "Darth")) "Drawing the last card")
+    (is (= {:cards {"Darth" [1] :deck [] :discarded []}} (draw-card {:cards {"Darth" [] :deck [1] :discarded []}} "Darth")) "Drawing the last card")
+    (is (= {:cards {"Darth" [1] :deck [] :discarded []}} (draw-card {:cards {"Darth" [] :deck [] :discarded [1]}} "Darth")) "Reshuffle discarded")
+    (is (= "No cards left" (draw-card {:cards {"Darth" [1] :deck [] :discarded []}} "Darth")) "Errormessage when no cards left")
     )
   )
+
 
 (deftest remove-from-all-test
   (testing "Remove all"
