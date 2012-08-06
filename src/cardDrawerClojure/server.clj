@@ -23,7 +23,7 @@
     [:ul
       
       [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
-      [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
+      [:li (str "Number of cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
       [:li (str "Out of play: " (format-list ((game :cards) :oop)))]      
       [:li (str "Admin seen by " (game :adminSeenBy) " at " (game :adminSeen))]
@@ -151,6 +151,22 @@
     (link-to (str "/status?name=" (nameobject :name)) "Back")
          ]))
 )
+
+(defn compute-adminstatus [stat]
+  (cond 
+    (= stat "zdeck") :deck
+    (= stat "zdiscard") :discard
+    (= stat "zoop") :oop
+    :else stat
+  )
+  )
+
+(defpage [:get "/adminupdate"]  {:as updateobject}
+  (let [stat (compute-adminstatus (updateobject :status))]
+  (dosync (ref-set game (move-card @game (to-int (updateobject :card)) stat)))
+  )
+  (redirect (str "/admin?name=" (updateobject :name)))
+  )
 
 
 
