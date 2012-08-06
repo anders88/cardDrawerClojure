@@ -7,16 +7,17 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 21)) :discarded [30 25 32]}}))
+(def game (ref {:cards {"Anders" [33 34] :deck (vec (range 1 21)) :discarded [30 25 32]}}))
 
 (defn format-list [cards]
   (reduce #(str %1 ", " %2) (sort cards))
   )
 
-(defpartial status-content [game]
+(defpartial status-content [game player-name]
   [:div {:id "someid"} 
     [:p (str "Date is " (new java.util.Date))]
     [:ul
+      [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
       [:li (str "Cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
       ]
@@ -35,8 +36,8 @@
 
 
 (defpage [:post "/register"] {:as registerobject}
-  (let [name (registerobject :name)]
-    (redirect (str "/status?name=" name))
+  (let [player-name (registerobject :name)]
+    (redirect (str "/status?name=" player-name))
   )
   )
 
@@ -51,12 +52,12 @@
   (html5 [:body [:h1 "Welcome"] (name-reg-form)])
   )
 
-(defpartial name-part [name]
-  [:div {:id "namediv", :style "display: none;"} name]
+(defpartial name-part [player-name]
+  [:div {:id "namediv", :style "display: none;"} player-name]
   )
 
 (defpartial reload-part [name]
-  [:p (status-content @game)]
+  [:p (status-content @game name)]
   )
 
 
