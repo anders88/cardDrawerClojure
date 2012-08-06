@@ -9,7 +9,7 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8}))
+(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8 :lastDrawn {}}))
 
 
 (defn format-list [cards]
@@ -21,7 +21,7 @@
   [:div {:id "someid"} 
     [:p (str "Date is " (new java.util.Date))]
     [:ul
-      
+      [:li (str "Last drawn card: " ((game :lastDrawn) player-name))]
       [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
       [:li (str "Number of cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]

@@ -42,7 +42,7 @@
     (empty? deck) (draw-card (assoc game :cards (assoc (game :cards) :deck discarded :discarded [])) player)
   :else
   (let [pick (((game :cards) :deck) (rand-int (count ((game :cards) :deck))))]
-      (move-card game pick player))
+      (assoc (move-card game pick player) :lastDrawn (assoc (game :lastDrawn) player pick)))
   )))
 
 
