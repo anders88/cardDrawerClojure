@@ -48,3 +48,14 @@
        "Cheking card status")
 ))
 
+(deftest new-game-test
+  (testing "New game"
+    (is (= {:cards {"Darth" [] "Luke" [] :deck [1 2 3 4 5] :discarded [] :oop []} :maxc 5} 
+      (create-new-game {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6} "5"))
+    )
+    (is (= "Card must be between 1 and 300" 
+      (create-new-game {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6} "400"))
+    )
+    )
+  )
+
