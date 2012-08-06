@@ -1,5 +1,16 @@
 (ns cardDrawerClojure.core)
 
+(defn to-int [s]
+  (try (Integer/parseInt s) (catch NumberFormatException e nil)))
+
+(defn read-card [card game]
+  (let [card-no (to-int card)]
+    (cond 
+      (nil? card-no) "Illegal card"
+      (or (> card-no (game :maxc)) (< card-no 1)) "Illegal card"
+      :else card-no
+    )))
+
 (defn register-player [game name]
   (assoc game :cards (assoc (game :cards) name []))
 )
@@ -36,5 +47,8 @@
 
 
 (defn discard-card [game card]
-  (move-card game card :discarded)
+  (let [card-no (read-card card game)]
+  (if (integer? card-no) (move-card game card-no :discarded)
+  card-no
+  ))  
 )

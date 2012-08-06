@@ -34,10 +34,6 @@
      (submit-button "Update value")
   ))
 
-(defn to-int [s]
-  (try (Integer/parseInt s) (catch NumberFormatException e nil)))
-
-
 (defpage [:post "/register"] {:as registerobject}
   (let [player-name (registerobject :name)]
     (dosync (ref-set game (register-player @game player-name)))

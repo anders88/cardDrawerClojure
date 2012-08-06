@@ -25,7 +25,9 @@
 
 (deftest discard-test
   (testing "Discarding cards"
-    (is (= {:cards {"Darth" [] :deck [4] :discarded [3]}} 
-      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []}} 3)) "Discarding a card")
+    (is (= {:cards {"Darth" [] :deck [4] :discarded [3]} :maxc 10} 
+      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "3")) "Discarding a card")
+    (is (= "Illegal card" 
+      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "11")) "To high card")  
     )
   )
