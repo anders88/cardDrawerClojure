@@ -118,6 +118,9 @@
   (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)))
   )
 
+(defpage [:get "/score"] {:as nameobject}
+  (reload-part (nameobject :name))
+)
 
 
 (defpage  [:get "/status"] {:as nameobject}
@@ -131,10 +134,9 @@
            (draw-card-part (nameobject :name))
            (discard-card-part (nameobject :name))
            (oop-card-part (nameobject :name))
-           (add-card-part (nameobject :name))
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
            [:p (link-to (str "/newgame?name=" (nameobject :name)) "New game")]
-
+           (add-card-part (nameobject :name))
       ])
 )
 
