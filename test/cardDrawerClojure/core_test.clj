@@ -25,10 +25,10 @@
 
 (deftest discard-test
   (testing "Discarding cards"
-    (is (= {:cards {"Darth" [] :deck [4] :discarded [3]} :maxc 10} 
+    (is (= {:cards {"Darth" [] :deck [4] :discarded [3]} :maxc 10}
       (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "3")) "Discarding a card")
-    (is (= "Illegal card" 
-      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "11")) "To high card")  
+    (is (= "Illegal card"
+      (discard-card {:cards {"Darth" [3] :deck [4] :discarded []} :maxc 10} "11")) "To high card")
     )
   )
 
@@ -41,7 +41,7 @@
       {:cardNo 4 :status :deck}
       {:cardNo 5 :status :discarded}
       {:cardNo 6 :status :oop}
-      ] :players #{"Darth" "Luke"}} 
+      ] :players #{"Darth" "Luke"}}
       (admin-summary {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6})
     ) "Cheking summary")
     (is (= "Luke" (card-status {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 5} 3))
@@ -50,12 +50,17 @@
 
 (deftest new-game-test
   (testing "New game"
-    (is (= {:cards {"Darth" [] "Luke" [] :deck [1 2 3 4 5] :discarded [] :oop []} :maxc 5} 
+    (is (= {:cards {"Darth" [] "Luke" [] :deck [1 2 3 4 5] :discarded [] :oop []} :maxc 5}
       (create-new-game {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6} "5"))
     )
-    (is (= "Card must be between 1 and 300" 
+    (is (= "Card must be between 1 and 300"
       (create-new-game {:cards {"Darth" [2] "Luke" [3] :deck [1 4] :discarded [5] :oop [6]} :maxc 6} "400"))
     )
     )
   )
 
+(deftest add-more-card-test
+  (testing "Adding more cards"
+    (is (= {:cards {"Darth" [4 5] "Luke" [2] :deck [1 3 6 7 8 9 10] :discarded [] :oop []} :maxc 10}
+           (add-new-cards {:cards {"Darth" [4 5] "Luke" [2] :deck [1 3] :discarded [] :oop []} :maxc 5} "10")
+           ))))

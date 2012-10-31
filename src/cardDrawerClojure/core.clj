@@ -5,7 +5,7 @@
 
 (defn read-card [card game]
   (let [card-no (to-int card)]
-    (cond 
+    (cond
       (nil? card-no) "Illegal card"
       (or (> card-no (game :maxc)) (< card-no 1)) "Illegal card"
       :else card-no
@@ -20,7 +20,7 @@
   )
 
 (defn remove-item [listing number]
-  (vec (concat (subvec (vec listing) 0 number) 
+  (vec (concat (subvec (vec listing) 0 number)
         (if (= (inc number) (count listing)) [] (subvec (vec listing) (inc number))))
   ))
 
@@ -29,15 +29,15 @@
 )
 
 (defn move-card [game card move-to]
-  (assoc game :cards (assoc 
+  (assoc game :cards (assoc
     (remove-from-all (game :cards) card) move-to (conj ((game :cards) move-to) card))
   )
 )
 
 
 (defn draw-card [game player]
-  (let [deck ((game :cards) :deck) discarded ((game :cards) :discarded)] 
-  (cond 
+  (let [deck ((game :cards) :deck) discarded ((game :cards) :discarded)]
+  (cond
     (and (empty? deck) (empty? discarded)) "No cards left"
     (empty? deck) (draw-card (assoc game :cards (assoc (game :cards) :deck discarded :discarded [])) player)
   :else
@@ -49,15 +49,15 @@
 (defn discard-card [game card]
   (let [card-no (read-card card game)]
   (if (integer? card-no) (move-card game card-no :discarded)
-  card-no 
- ))  
+  card-no
+ ))
 )
 
 (defn out-of-play-card [game card]
   (let [card-no (read-card card game)]
   (if (integer? card-no) (move-card game card-no :oop)
   card-no
-  ))  
+  ))
 )
 
 (defn card-status [game card-no]
@@ -78,9 +78,17 @@
 (defn create-new-game [game numcards]
   (let [numc (read-card numcards (assoc game :maxc 300))]
   (if (integer? numc)
-  (assoc game :maxc numc :cards 
+  (assoc game :maxc numc :cards
     (merge (reduce merge (map (fn [el] {el []}) (player-list game))) {:deck (vec (range 1 (inc numc))) :discarded [] :oop []})
     )
   "Card must be between 1 and 300"
   )
 ))
+
+(defn add-new-cards [game numcards]
+  (let [numc (read-card numcards (assoc game :maxc 300)) cards (game :cards)]
+  (if (integer? numc)
+    (assoc game :maxc numc :cards
+           (assoc cards :deck (concat (cards :deck) (range (inc (game :maxc)) (inc numc)))))
+    "Card must be between"
+  )))
