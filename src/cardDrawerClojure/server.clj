@@ -4,7 +4,7 @@
         [hiccup.page-helpers :only [html5 include-js link-to unordered-list]]
         [hiccup.form-helpers]
         [noir.response :only [redirect]]
-        [cardDrawerClojure.core]  
+        [cardDrawerClojure.core]
         )
   (:require [noir.server :as server])
 )
@@ -18,14 +18,14 @@
   ))
 
 (defpartial status-content [game player-name]
-  [:div {:id "someid"} 
+  [:div {:id "someid"}
     [:p (str "Date is " (new java.util.Date))]
     [:ul
       [:li (str "Last drawn card: " ((game :lastDrawn) player-name))]
       [:li (str "Your cards: " (format-list ((game :cards) player-name)))]
       [:li (str "Number of cards in deck: " (count ((game :cards) :deck)))]
       [:li (str "Discarded cards: " (format-list ((game :cards) :discarded)))]
-      [:li (str "Out of play: " (format-list ((game :cards) :oop)))]      
+      [:li (str "Out of play: " (format-list ((game :cards) :oop)))]
       [:li (str "Admin seen by " (game :adminSeenBy) " at " (game :adminSeen))]
       ]
   ]
@@ -75,20 +75,20 @@
 
 (defpartial draw-card-part [name]
   (form-to [:post "/drawCard"]
-     (hidden-field "name" name)     
+     (hidden-field "name" name)
      (submit-button "Draw card"))
   )
-  
+
 (defpage [:post "/drawCard"] {:as registerobject}
-  (let [player-name (registerobject :name)]    
-    (handle-result-part player-name (draw-card @game player-name))    
+  (let [player-name (registerobject :name)]
+    (handle-result-part player-name (draw-card @game player-name))
   )
   )
 
 (defpartial discard-card-part [name]
   (form-to [:post "/discardCard"]
      (hidden-field "name" name)
-     (text-field "card")  
+     (text-field "card")
      (submit-button "Discard card"))
   )
 
@@ -99,7 +99,7 @@
 (defpartial oop-card-part [name]
   (form-to [:post "/oopCard"]
      (hidden-field "name" name)
-     (text-field "card")  
+     (text-field "card")
      (submit-button "Out of play"))
   )
 
@@ -107,18 +107,31 @@
   (handle-result-part (registerobject :name) (out-of-play-card @game (registerobject :card)))
   )
 
+(defpartial add-card-part [name]
+  (form-to [:post "/addCard"]
+     (hidden-field "name" name)
+     (text-field "card")
+     (submit-button "Add cards to deck"))
+  )
+
+(defpage [:post "/addCard"] {:as registerobject}
+  (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)))
+  )
+
+
 
 (defpage  [:get "/status"] {:as nameobject}
-    (html5 
+    (html5
       [:head
-    [:title "Dummy title"]
+    [:title "Draw card game"]
     (include-js "/jquery-1.7.2.js") (include-js "/reload.js")]
-      [:body [:h1 (str "Hello " (nameobject :name))] 
-            (name-part (nameobject :name)) 
+      [:body [:h1 (str "Hello " (nameobject :name))]
+            (name-part (nameobject :name))
            (reload-part (nameobject :name))
            (draw-card-part (nameobject :name))
            (discard-card-part (nameobject :name))
            (oop-card-part (nameobject :name))
+           (add-card-part (nameobject :name))
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
            [:p (link-to (str "/newgame?name=" (nameobject :name)) "New game")]
 
@@ -132,30 +145,30 @@
 
 (defn card-status-display [status-elem player-list player-name]
   (let [card (status-elem :cardNo)]
-  (html [:div (str card ": " (status-elem :status) " - ") 
+  (html [:div (str card ": " (status-elem :status) " - ")
   (str "<a href=\"/adminupdate?card=" card "&status=zdeck&name=" player-name "\">To deck</a>, ")
   (str "<a href=\"/adminupdate?card=" card "&status=zdiscard&name=" player-name "\">Discard</a>, ")
   (str "<a href=\"/adminupdate?card=" card "&status=zoop&name=" player-name "\">Out of play</a>, ")
-  (reduce #(str %1 ", " %2) 
-  (map 
-    #(str "<a href=\"/adminupdate?card=" card "&status=" % "&name=" player-name "\">" % "</a>, ") 
-     player-list))  
+  (reduce #(str %1 ", " %2)
+  (map
+    #(str "<a href=\"/adminupdate?card=" card "&status=" % "&name=" player-name "\">" % "</a>, ")
+     player-list))
   ])
   ))
 
 (defpage  [:get "/admin"] {:as nameobject}
   (dosync (ref-set game (assoc @game :adminSeen (str (new java.util.Date)) :adminSeenBy (nameobject :name))))
   (let [summary (admin-summary @game)]
-  (html5 [:body 
+  (html5 [:body
     [:h1 "Admin page"]
-    (unordered-list (map #(card-status-display % (summary :players) (nameobject :name)) 
+    (unordered-list (map #(card-status-display % (summary :players) (nameobject :name))
      (summary :cards)))
     (link-to (str "/status?name=" (nameobject :name)) "Back")
          ]))
 )
 
 (defn compute-adminstatus [stat]
-  (cond 
+  (cond
     (= stat "zdeck") :deck
     (= stat "zdiscard") :discard
     (= stat "zoop") :oop
@@ -171,12 +184,12 @@
   )
 
 (defpage [:get "/newgame"] {:as nameobject}
-  (html5 
+  (html5
   [:body [:h1 "Start new game"]
     (form-to [:post "/createGame"]
      (hidden-field "name" (nameobject :name))
       (label "newval" "Number of cards:")
-     (text-field "numcards")  
+     (text-field "numcards")
      (submit-button "Start new game"))]
   ))
 

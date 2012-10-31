@@ -89,6 +89,6 @@
   (let [numc (read-card numcards (assoc game :maxc 300)) cards (game :cards)]
   (if (integer? numc)
     (assoc game :maxc numc :cards
-           (assoc cards :deck (concat (cards :deck) (range (inc (game :maxc)) (inc numc)))))
+           (assoc cards :deck (vec (concat (cards :deck) (range (inc (game :maxc)) (inc numc))))))
     (str "Number of cards must be between " (inc (game :maxc)) " and 300")
   )))
