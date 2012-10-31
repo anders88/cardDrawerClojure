@@ -63,4 +63,9 @@
   (testing "Adding more cards"
     (is (= {:cards {"Darth" [4 5] "Luke" [2] :deck [1 3 6 7 8 9 10] :discarded [] :oop []} :maxc 10}
            (add-new-cards {:cards {"Darth" [4 5] "Luke" [2] :deck [1 3] :discarded [] :oop []} :maxc 5} "10")
-           ))))
+           ))
+    (is (= "Number of cards must be between 6 and 300"
+           (add-new-cards {:cards {"Darth" [4 5] "Luke" [2] :deck [1 3] :discarded [] :oop []} :maxc 5} "xx")
+           ))
+
+    ))

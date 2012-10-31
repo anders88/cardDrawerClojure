@@ -90,5 +90,5 @@
   (if (integer? numc)
     (assoc game :maxc numc :cards
            (assoc cards :deck (concat (cards :deck) (range (inc (game :maxc)) (inc numc)))))
-    "Card must be between"
+    (str "Number of cards must be between " (inc (game :maxc)) " and 300")
   )))
