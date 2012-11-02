@@ -80,6 +80,12 @@
      (submit-button "Draw card"))
   )
 
+(defpartial roll-dice-part [name]
+  (form-to [:post "/rollDice"]
+     (hidden-field "name" name)
+     (submit-button "Roll dice"))
+  )
+
 (defpage [:post "/drawCard"] {:as registerobject}
   (let [player-name (registerobject :name)]
     (handle-result-part player-name (draw-card @game player-name))
@@ -119,6 +125,10 @@
   (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)))
   )
 
+(defpage [:post "/rollDice"] {:as registerobject}
+  (handle-result-part (registerobject :name) (roll-dice @game (registerobject :name)))
+)
+
 (defpage [:get "/score"] {:as nameobject}
   (reload-part (nameobject :name))
 )
@@ -133,6 +143,7 @@
             (name-part (nameobject :name))
            (reload-part (nameobject :name))
            (draw-card-part (nameobject :name))
+           (roll-dice-part (nameobject :name))
            (discard-card-part (nameobject :name))
            (oop-card-part (nameobject :name))
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
