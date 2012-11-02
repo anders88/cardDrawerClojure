@@ -69,3 +69,12 @@
            ))
 
     ))
+
+(deftest roll-dice-test
+  (testing "Rolling"
+    (let [gameres (roll-dice {:roll 0 :rollBy "None" :numRolls 0} "Darth")]
+    (is (= "Darth" (gameres :rollBy)))
+    (is (= 1 (gameres :numRolls)))
+    (is (> (gameres :roll) 0))
+    (is (< (gameres :roll) 7))
+)))

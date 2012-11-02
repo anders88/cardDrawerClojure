@@ -92,3 +92,7 @@
            (assoc cards :deck (vec (concat (cards :deck) (range (inc (game :maxc)) (inc numc))))))
     (str "Number of cards must be between " (inc (game :maxc)) " and 300")
   )))
+
+(defn roll-dice [game player]
+  (assoc game :roll (inc (rand-int 6)) :rollBy player :numRolls (inc (game :numRolls)))
+)

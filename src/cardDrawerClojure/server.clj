@@ -9,7 +9,7 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8 :lastDrawn {}}))
+(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8 :lastDrawn {} :roll 0 :rollBy "None" :numRolls 0}))
 
 
 (defn format-list [cards]
@@ -28,6 +28,7 @@
       [:li (str "Out of play: " (format-list ((game :cards) :oop)))]
       [:li (str "Admin seen by " (game :adminSeenBy) " at " (game :adminSeen))]
       ]
+   [:h3 (str "Last roll " (game :roll) " by " (game :rollBy) " (Total rolls is " (game :numRolls) ")")]
   ]
   )
 
