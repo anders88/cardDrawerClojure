@@ -9,7 +9,7 @@
   (:require [noir.server :as server])
 )
 
-(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8 :lastDrawn {} :roll 0 :rollBy "None" :numRolls 0}))
+(def game (ref {:cards {:deck (vec (range 1 9)) :discarded [] :oop []} :maxc 8 :lastDrawn {} :roll 0 :rollBy "None" :numRolls 0 :eventlog []}))
 
 
 (defn format-list [cards]
@@ -65,7 +65,7 @@
   [:p (status-content @game name)]
   )
 
-(defn handle-result-part [player-name result]
+(defn handle-result-part [player-name result message]
   (if (map? result)
   (let [player player-name]
   (dosync (ref-set game result))
@@ -88,7 +88,7 @@
 
 (defpage [:post "/drawCard"] {:as registerobject}
   (let [player-name (registerobject :name)]
-    (handle-result-part player-name (draw-card @game player-name))
+    (handle-result-part player-name (draw-card @game player-name) (str "Card drawn by" player-name))
   )
   )
 
@@ -100,7 +100,7 @@
   )
 
 (defpage [:post "/discardCard"] {:as registerobject}
-  (handle-result-part (registerobject :name) (discard-card @game (registerobject :card)))
+  (handle-result-part (registerobject :name) (discard-card @game (registerobject :card)) (str "Discarded card " (registerobject :card)))
   )
 
 (defpartial oop-card-part [name]
@@ -111,7 +111,7 @@
   )
 
 (defpage [:post "/oopCard"] {:as registerobject}
-  (handle-result-part (registerobject :name) (out-of-play-card @game (registerobject :card)))
+  (handle-result-part (registerobject :name) (out-of-play-card @game (registerobject :card)) (str "Card out of play " (registerobject :card)))
   )
 
 (defpartial add-card-part [name]
@@ -122,12 +122,13 @@
   )
 
 (defpage [:post "/addCard"] {:as registerobject}
-  (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)))
+  (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)) (str "New cards added max " (registerobject :card)))
   )
 
 (defpage [:post "/rollDice"] {:as registerobject}
-  (handle-result-part (registerobject :name) (roll-dice @game (registerobject :name)))
-)
+  (let [new-game (roll-dice @game (registerobject :name))]
+  (handle-result-part (registerobject :name) new-game (str "Dice roll " (new-game :roll) " by " (registerobject :name)))
+))
 
 (defpage [:get "/score"] {:as nameobject}
   (reload-part (nameobject :name))
