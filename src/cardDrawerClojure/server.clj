@@ -125,9 +125,24 @@
      (submit-button "Add cards to deck"))
   )
 
+
 (defpage [:post "/addCard"] {:as registerobject}
   (handle-result-part (registerobject :name) (add-new-cards @game (registerobject :card)) (str "New cards added max " (registerobject :card)))
   )
+
+(defpartial add-log-part [name]
+  (form-to [:post "/addLog"]
+     (hidden-field "name" name)
+     (text-field "logmessage")
+     (submit-button "Add to log"))
+  )
+
+
+(defpage [:post "/addLog"] {:as registerobject}
+   (let [new-game (add-log-message @game (registerobject :logmessage))]
+     (dosync (ref-set game new-game))
+     (redirect (str "/status?name=" (registerobject :name))))
+)
 
 (defpage [:post "/rollDice"] {:as registerobject}
   (let [new-game (roll-dice @game (registerobject :name))]
@@ -154,6 +169,7 @@
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
            [:p (link-to (str "/newgame?name=" (nameobject :name)) "New game")]
            (add-card-part (nameobject :name))
+           (add-log-part (nameobject :name))
            [:p (link-to (str "/log?name=" (nameobject :name)) "Log")]
 
       ])
