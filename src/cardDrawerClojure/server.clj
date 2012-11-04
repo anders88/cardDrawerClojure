@@ -65,10 +65,14 @@
   [:p (status-content @game name)]
   )
 
+(defn add-log-message [game message]
+  (assoc game :eventlog (conj (game :eventlog) (str (new java.util.Date) "->" message)))
+)
+
 (defn handle-result-part [player-name result message]
   (if (map? result)
-  (let [player player-name]
-  (dosync (ref-set game result))
+  (let [player player-name res-with-log (add-log-message result message)]
+  (dosync (ref-set game res-with-log))
   (redirect (str "/status?name=" player-name)))
   (html5 [:body [:h1 "Error"] [:p result] [:p (link-to (str "/status?name=" player-name) "Back")]])
   ))
@@ -150,6 +154,8 @@
            [:p (link-to (str "/admin?name=" (nameobject :name)) "Admin")]
            [:p (link-to (str "/newgame?name=" (nameobject :name)) "New game")]
            (add-card-part (nameobject :name))
+           [:p (link-to (str "/log?name=" (nameobject :name)) "Log")]
+
       ])
 )
 
@@ -181,6 +187,15 @@
     (link-to (str "/status?name=" (nameobject :name)) "Back")
          ]))
 )
+
+(defpage [:get "/log"] {:as nameobject}
+  (html5 [:body
+          [:h1 "Eventlog"]
+          (unordered-list (@game :eventlog))
+          (link-to (str "/status?name=" (nameobject :name)) "Back")
+          ])
+)
+
 
 (defn compute-adminstatus [stat]
   (cond
